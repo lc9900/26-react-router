@@ -33,6 +33,11 @@ module.exports = db.define('playlist', {
       .findById(songId);
       return DataTypes.Promise.all([addedToList, songFromDb])
       .spread((result, song) => song);
+    },
+
+    toJSON: function () {
+      //Return a shallow clone so toJSON method of the nested models can be called recursively.
+      return Object.assign({}, this.get());
     }
   }
 

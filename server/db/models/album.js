@@ -29,6 +29,13 @@ module.exports = db.define('album', {
         model: db.model('song').scope('defaultScope', 'populated')
       }]
     })
+  },
+
+  instanceMethods: {
+    toJSON: function () {
+      //Return a shallow clone so toJSON method of the nested models can be called recursively.
+      return Object.assign({}, this.get());
+    }
   }
 
 });
