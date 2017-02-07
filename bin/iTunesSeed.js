@@ -23,7 +23,7 @@ program
   .usage('[options] [iTunes Music Library.xml...]')
   .description("Seeds the juke database with metadata from an XML iTunes library file. " +
                "By default, we'll import Juke's music.xml and your iTunes library.")
-  .option('-f, --force', 'Force sync (will delete everything in the db)')
+  .option('-s, --no-force', 'Sync the db without force')
   .option('-n, --no-itunes', 'Skip importing iTunes library')
   .option('-L, --limit <num>', `Limit total tracks imported to <num> (default ${DEFAULT_TRACK_LIMIT})`, parseInt)
   .option('-u, --unlimited', 'Import unlimited tracks')
@@ -172,8 +172,8 @@ const Results = ['artists', 'albums', 'songs', 'artistSong']
                                  RETURNING ${pKeyExpr}`, {
                                    replacements: values,
                                    type: 'INSERT'
-                                 }))
-                 .then(results => (++findOrCreate.created, results[0].id))
+                                 }).then(results => (++findOrCreate.created, results)))
+                 .then(results => results[0].id)
                  .catch(err => {
                    log.error `warning: ${err.message}`
                    log.error `  in findOrCreate for ${key} into ${table}`
@@ -194,9 +194,9 @@ const Results = ['artists', 'albums', 'songs', 'artistSong']
         findOrCreate.table = table
         return findOrCreate
       })
-const Artist = Results[0], 
-      Album = Results[1], 
-      Song = Results[2], 
+const Artist = Results[0],
+      Album = Results[1],
+      Song = Results[2],
       ArtistSong = Results[3]
 
 // Sequelize uses a column pair as the primary key of its join table, so we'd better select
