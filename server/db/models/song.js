@@ -14,7 +14,13 @@ module.exports = db.define('song', {
     }
   },
   genre: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING
+  },
+  audioUrl: {
+    type: DataTypes.VIRTUAL,
+    get: function () {
+      return `/api/songs/${this.id}/audio`
+    }
   },
   /* NOTE: `url` is internal to the server, and is hidden from the client. */
   url: {
