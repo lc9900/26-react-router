@@ -1,7 +1,5 @@
 'use strict';
 
-var webpack = require('webpack');
-
 module.exports = {
   entry: './browser/react/index.js',
   output: {
