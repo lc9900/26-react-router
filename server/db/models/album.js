@@ -4,7 +4,7 @@ const db = require('../db');
 const DataTypes = db.Sequelize;
 const unique = require('./plugins/unique-through')
 
-module.exports = db.define('album', {
+const Album = db.define('album', {
 
   name: {
     type: DataTypes.STRING(1e4), // eslint-disable-line new-cap
@@ -34,13 +34,12 @@ module.exports = db.define('album', {
         model: db.model('song').scope('defaultScope', 'populated')
       }]
     })
-  },
-
-  instanceMethods: {
-    toJSON: function () {
-      //Return a shallow clone so toJSON method of the nested models can be called recursively.
-      return Object.assign({}, this.get());
-    }
   }
-
 });
+
+Album.prototype.toJSON = function () {
+  //Return a shallow clone so toJSON method of the nested models can be called recursively.
+  return Object.assign({}, this.get());
+}
+
+module.exports = Album;

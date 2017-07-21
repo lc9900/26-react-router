@@ -4,7 +4,7 @@ const db = require('../db');
 const DataTypes = db.Sequelize;
 const unique = require('./plugins/unique-through');
 
-module.exports = db.define('playlist', {
+const Playlist = db.define('playlist', {
 
   name: {
     type: DataTypes.STRING,
@@ -23,22 +23,22 @@ module.exports = db.define('playlist', {
         model: db.model('song').scope('defaultScope', 'populated')
       }]
     })
-  },
-  instanceMethods: {
-    addAndReturnSong: function (songId) { // `addSong` doesn't promise a song.
-      songId = String(songId);
-      const addedToList = this.addSong(songId);
-      const songFromDb = db.model('song')
-      .scope('defaultScope', 'populated')
-      .findById(songId);
-      return DataTypes.Promise.all([addedToList, songFromDb])
-      .spread((result, song) => song);
-    },
-
-    toJSON: function () {
-      //Return a shallow clone so toJSON method of the nested models can be called recursively.
-      return Object.assign({}, this.get());
-    }
   }
-
 });
+
+Playlist.prototype.addAndReturnSong = function (songId) { // `addSong` doesn't promise a song
+  songId = String(songId);
+  const addedToList = this.addSong(songId);
+  const songFromDb = db.model('song')
+    .scope('defaultScope', 'populated')
+    .findById(songId);
+  return DataTypes.Promise.all([addedToList, songFromDb])
+    .spread((result, song) => song);
+}
+
+Playlist.prototype.toJSON = function () {
+  //Return a shallow clone so toJSON method of the nested models can be called recursively.
+  return Object.assign({}, this.get());
+}
+
+module.exports = Playlist;

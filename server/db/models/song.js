@@ -5,7 +5,7 @@ const _ = require('lodash');
 const db = require('../db');
 const DataTypes = db.Sequelize;
 
-module.exports = db.define('song', {
+const Song = db.define('song', {
   name: {
     type: DataTypes.STRING(1e4), // eslint-disable-line new-cap
     allowNull: false,
@@ -39,11 +39,12 @@ module.exports = db.define('song', {
         model: db.model('artist')
       }]
     })
-  },
-  instanceMethods: {
-    toJSON: function () { // overriding toJSON to prevent url from leaking to client
-      // see https://github.com/sequelize/sequelize/issues/1462
-      return _.omit(this.get(), ['url']);
-    }
   }
 });
+
+Song.prototype.toJSON = function () { // overriding toJSON to prevent url from leaking to client
+  // see https://github.com/sequelize/sequelize/issues/1462
+  return _.omit(this.get(), ['url']);
+}
+
+module.exports = Song;
