@@ -173,7 +173,16 @@ const Results = ['artists', 'albums', 'songs', 'artistSong']
                                    replacements: values,
                                    type: 'INSERT'
                                  }).then(results => (++findOrCreate.created, results)))
-                 .then(results => results[0].id)
+              .then(results => {
+                /**
+                 * In Sequelize v3, the format of results was that it was an array
+                 * where the 0th element was an object with the id.
+                 * In Sequelize v4, the format is an array, where the 0th element
+                 * is an array whose 0th element is that object.
+                 *  ¯\_(ツ)_/¯
+                 */
+                return results[0][0].id
+              })
                  .catch(err => {
                    log.error `warning: ${err.message}`
                    log.error `  in findOrCreate for ${key} into ${table}`
